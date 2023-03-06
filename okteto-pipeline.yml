@@ -1,0 +1,5 @@
+deploy:
+  - okteto build -t registry.cloud.okteto.net/${OKTETO_NAMESPACE}/sqllite-api-sample:${OKTETO_GIT_COMMIT} .
+  - kubectl apply -f deployment.yml
+  - kubectl set image deployment sqllite-api-sample-deployment sqllite-api-sample-deployment=registry.cloud.okteto.net/${OKTETO_NAMESPACE}/sqllite-api-sample:${OKTETO_GIT_COMMIT}
+  - kubectl apply -f service.yml
