@@ -1,31 +1,19 @@
-const sqlite3 = require('sqlite3').verbose();
-const express = require('express');
-const app = express();
 const port = 8080;
+const express = require('express');
+const sqlite3 = require('better-sqlite3');
 
-// Open a SQLite database connection
-let db = new sqlite3.Database('users.SQLite', sqlite3.OPEN_READONLY, (err) => {
-  if (err) {
-    console.error(err.message);
-  }
-  console.log('Connected to the users database.');
-});
+const app = express();
 
-// Define an API endpoint that retrieves all rows from the "users" table and returns them as JSON
+// create a new database connection
+const db = new sqlite3('users.SQLite');
+
+// define a route that returns the result of the query
 app.get('/api/users', (req, res) => {
-  db.all('SELECT * FROM users', [], (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).send('Internal Server Error');
-    } else {
-      res.json(rows);
-    }
-  });
+  const rows = db.prepare('select * from users').all();
+  res.json(rows);
 });
-app.get('/', (req, res) => {
-  res.send('users.SQLite api');
-});
-// Start the API server
+
+// start the server
 app.listen(port, () => {
-  console.log(`API server listening at http://localhost:${port}`);
+  console.log('Server listening on port '+port);
 });
